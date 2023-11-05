@@ -1,49 +1,67 @@
 let yellowColor, orangeColor, bridgeColor, redColor, lightBlueColor, darkBlueColor, blueColor, lakeColor, greenColor, darkGreenColor;
-//declare variables for audio tracks
-let thunderAudio, screamAudio;
+//declare variables for audio 
+let thunderAudio
 //declar button for play music
 let playButton
-//preload the audio files
+//preload the audio file
 function preload() {
   thunderAudio = loadSound("assets/thunderisland.mp3");
 }
 
 function setup() {
   createCanvas(646, 800);
-  // initial the colors
-  let currentColors = [];
-  dayColors = [color(237, 199, 98), color(208, 179, 104), color(194, 158, 106), color(145, 59, 34), color(136, 153, 170), color(42, 47, 78), color(51, 63, 89), color(57, 73, 109), color(81, 103, 82), color(46, 61, 54)];
-  for (let i = 0; i < dayColors.length; i++) {
-    currentColors.push(dayColors[i]);
-  }
-  yellowColor = currentColors[0];
-  orangeColor = currentColors[1];
-  bridgeColor = currentColors[2];
-  redColor = currentColors[3];
-  lightBlueColor = currentColors[4];
-  darkBlueColor = currentColors[5];
-  blueColor = currentColors[6];
-  lakeColor = currentColors[7];
-  greenColor = currentColors[8];
-  darkGreenColor = currentColors[9];
+  amplitude = new p5.Amplitude();
+  // initial the original colors
+  yellowColor = color(237, 199, 98); //sky and lake
+  orangeColor = color(208, 179, 104); //sky , head and shadow on the cloth
+  bridgeColor = color(194, 158, 106); //bridge
+  redColor = color(145, 59, 34); //sky and shadow of the background people and the handrail of the bridge
+  lightBlueColor = color(136, 153, 170); // centre of the lake and sky
+  darkBlueColor = color(42, 47, 78); //lake shadow and background people and screamer's cloth
+  blueColor = color(51, 63, 89); // lake background color
+  lakeColor = color(57, 73, 109); // edge of the lake
+  greenColor = color(81, 103, 82); // land and shadow on the face
+  darkGreenColor = color(46, 61, 54); // land shadow  
+  
+  // initial the sky animation colors for audio animation
+  thunderBlack = color(0, 0, 0); 
+  thunderBlue = color(30, 30, 100); 
+  thunderGray = color(115, 115, 115); 
+  thunderWhite = color(255, 255, 224); 
+  thunderOrange = color(255, 165, 0); 
+  thunderSun = color(255, 219, 0); 
 
+// set up the fft audio analysis
 let fft = new p5.FFT();
     thunderAudio.connect(fft);
-
-    playButton = createButton('Play Thunder');
-    playButton.position(20, height - 40); // Position it at the bottom of the canvas
+//create play button for audio 
+    playButton = createButton('Play Thunder Island');
+    playButton.position(20, height - 40); 
     playButton.mousePressed(togglePlay); 
 }
 function draw() {
   background(240);
   drawLake();
   drawLand();
-  drawSky();
   drawBridge();
   drawBodyshape();
-  drawLightning();
+  drawSky();
+}
+// Toggle play function to play song and pause song when button pressed
+function togglePlay() {
+  if (thunderAudio.isPlaying()) {
+    thunderAudio.pause();
+    playButton.html('Play Thunder Island'); 
+  } else {
+    thunderAudio.play();
+    playButton.html('Pause'); 
+  }
 }
 function drawLake() {
+  let ampLevel = amplitude.getLevel();
+  let colorChange = constrain(ampLevel * 4, 0, 1);
+  let middleLakeColor = lerpColor(yellowColor, thunderOrange, colorChange);
+
   fill(blueColor);
   rect(0, 200, 646, 600);
 
@@ -81,7 +99,7 @@ function drawLake() {
   endShape();
 
 
-  fill(yellowColor);
+  fill(middleLakeColor);
   beginShape();
   curveVertex(3, 296);
   curveVertex(3, 296);
@@ -123,6 +141,7 @@ function drawLake() {
 
 
 function drawLand() {
+
   fill(darkGreenColor);
   beginShape();
   curveVertex(646, 255);
@@ -156,22 +175,23 @@ function drawLand() {
 
 
 function drawSky() {
-  // Dynamic Sky Color based on FFT
-  let volume = fft.getEnergy("bass");
-  let lerpAmt = map(volume, 0, 255, 0, 1);
-  // Dark blue for low bass
-  let fromColor = color(29, 12, 98); 
-  // Light blue for high bass
-  let toColor = color(137, 207, 240); 
-  let currentColor = lerpColor(fromColor, toColor, lerpAmt);
+// Get the current amplitude level and amplify its effect by 4 on color change to make change more intense
+// use constrain to keep the color value between 0-1
+  let ampLevel = amplitude.getLevel();
+  let colorChange = constrain(ampLevel * 4, 0, 1);
+  //Create color change using lerpColor. change from original color to color of choice
+  let redChange1 = lerpColor(redColor, thunderBlack, colorChange);
+  let redChange2 = lerpColor(redColor, thunderWhite, colorChange);
+  let orangeChange1 = lerpColor(orangeColor, thunderBlue, colorChange);
+  let orangeChange2 = lerpColor(orangeColor, redColor, colorChange);
+  let orangeChange3 = lerpColor(orangeColor, thunderWhite, colorChange);
+  let yellowChange1 = lerpColor(yellowColor, thunderSun, colorChange);
   
 
-  //New Brush Stroke
   noStroke();
   fill(lightBlueColor);
-  rect(0, 0, 800, 200);
-
-
+  rect(0, 0, 800, 200); 
+  
   fill(redColor);
   beginShape();
   curveVertex(0, 0);
@@ -191,7 +211,7 @@ function drawSky() {
   endShape(CLOSE);
 
 
-  fill(orangeColor);
+  fill(orangeChange1);
   beginShape();
   curveVertex(0, 25);
   curveVertex(0, 25);
@@ -209,7 +229,7 @@ function drawSky() {
   endShape(CLOSE);
 
 
-  fill(redColor);
+  fill(redChange1);
   beginShape();
   curveVertex(0, 45);
   curveVertex(0, 45);
@@ -229,7 +249,7 @@ function drawSky() {
 
 
   //New Brush Stroke
-  fill(orangeColor);
+  fill(orangeChange2);
   beginShape();
   curveVertex(0, 70);
   curveVertex(0, 70);
@@ -249,7 +269,7 @@ function drawSky() {
 
 
   //New Brush Stroke
-  fill(redColor);
+  fill(redChange1);
   beginShape();
   curveVertex(0, 120);
   curveVertex(0, 120);
@@ -266,7 +286,7 @@ function drawSky() {
 
 
   //New Brush Stroke
-  fill(orangeColor);
+  fill(orangeChange3);
   beginShape();
   curveVertex(90, 140);
   curveVertex(90, 140);
@@ -279,6 +299,7 @@ function drawSky() {
 
 
   //New Brush Stroke
+  fill(orangeColor)
   beginShape();
   curveVertex(0, 160);
   curveVertex(0, 160);
@@ -294,7 +315,7 @@ function drawSky() {
 
 
   //New Brush Stroke
-  fill(yellowColor);
+  fill(yellowChange1);
   beginShape();
   curveVertex(30, 90);
   curveVertex(30, 90);
@@ -306,6 +327,7 @@ function drawSky() {
 
 
   //New Brush Stroke
+  fill(yellowChange1);
   beginShape();
   curveVertex(0, 190);
   curveVertex(0, 190);
@@ -321,7 +343,7 @@ function drawSky() {
 
 
   // NewBrush Stroke
-  fill(redColor);
+  fill(redChange2);
   beginShape();
   curveVertex(0, 180);
   curveVertex(0, 180);
@@ -336,14 +358,21 @@ function drawSky() {
   curveVertex(0, 0);
   curveVertex(0, 0);
   endShape(CLOSE);
+
 }
 
 
 //BRIDGE DRAWING
 function drawBridge() {
+  let ampLevel = amplitude.getLevel();
+  let colorChange = constrain(ampLevel * 10, 0, 1);
+  // let colorChange = map(level, 0, 5, 0, 5); // map amplitude level to a range from 0 to 1 for lerpColor
+  let bridgeColorchange1 = lerpColor(bridgeColor, thunderBlack, colorChange);
+  let bridgeColorchange2 = lerpColor(redColor, thunderWhite, colorChange);
+
   noStroke();
   // Drawing the main bridge
-  fill(bridgeColor);
+  fill(bridgeColorchange1);
   beginShape();
   vertex(0, 240);
   vertex(0, 800);
@@ -359,7 +388,7 @@ function drawBridge() {
   endShape(CLOSE);
 
 
-  fill(redColor);
+  fill(bridgeColorchange2);
   beginShape();
   vertex(0, 230);
   vertex(520, 800);
@@ -566,13 +595,3 @@ function drawBodyshape() {
   endShape()
 }
 
-// create play song button play and pause on the song
-function togglePlay() {
-  if (thunderAudio.isPlaying()) {
-    thunderAudio.pause();
-    playButton.html('Play Thunder'); 
-  } else {
-    thunderAudio.play();
-    playButton.html('Pause'); 
-  }
-}
