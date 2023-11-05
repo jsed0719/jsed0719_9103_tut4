@@ -1,4 +1,13 @@
 let yellowColor, orangeColor, bridgeColor, redColor, lightBlueColor, darkBlueColor, blueColor, lakeColor, greenColor, darkGreenColor;
+//declare variables for audio tracks
+let thunderAudio, screamAudio;
+//declar button for play music
+let playButton
+//preload the audio files
+function preload() {
+  thunderAudio = loadSound("assets/thunderisland.mp3");
+}
+
 function setup() {
   createCanvas(646, 800);
   // initial the colors
@@ -17,6 +26,13 @@ function setup() {
   lakeColor = currentColors[7];
   greenColor = currentColors[8];
   darkGreenColor = currentColors[9];
+
+let fft = new p5.FFT();
+    thunderAudio.connect(fft);
+
+    playButton = createButton('Play Thunder');
+    playButton.position(20, height - 40); // Position it at the bottom of the canvas
+    playButton.mousePressed(togglePlay); 
 }
 function draw() {
   background(240);
@@ -25,6 +41,7 @@ function draw() {
   drawSky();
   drawBridge();
   drawBodyshape();
+  drawLightning();
 }
 function drawLake() {
   fill(blueColor);
@@ -139,6 +156,16 @@ function drawLand() {
 
 
 function drawSky() {
+  // Dynamic Sky Color based on FFT
+  let volume = fft.getEnergy("bass");
+  let lerpAmt = map(volume, 0, 255, 0, 1);
+  // Dark blue for low bass
+  let fromColor = color(29, 12, 98); 
+  // Light blue for high bass
+  let toColor = color(137, 207, 240); 
+  let currentColor = lerpColor(fromColor, toColor, lerpAmt);
+  
+
   //New Brush Stroke
   noStroke();
   fill(lightBlueColor);
@@ -359,8 +386,6 @@ function drawBridge() {
 
 
 function drawBodyshape() {
-
-
   stroke(orangeColor);
   //draw body outline:
   fill(blueColor);
@@ -377,53 +402,29 @@ function drawBodyshape() {
   //middle arm to elbow
   curveVertex(176, 648); //18
   curveVertex(198, 666); //18.5
-
-
   //curved hips left
   curveVertex(180, 720); //20
   curveVertex(212, 785); //22
-
-
   //bottom
   curveVertex(324, 785); //22
-
-
-
-
   //curved hips right
   curveVertex(295, 720); //20
   curveVertex(313, 648); //18
-
-
-
-
   //elbow to middle arm
   curveVertex(331, 658); //18.3
   curveVertex(352, 648); //18
-
-
-
-
   //middle arm to shoulder
   curveVertex(360, 612); //17
   curveVertex(346, 522); //14.5
-
-
   //hand bump/shoulder
   curveVertex(342, 504); //14
   curveVertex(330, 486); //13.5
   //head
   curveVertex(352, 414); //11.5
   curveVertex(335, 375); //11
-
-
   curveVertex(288, 360); //10
   curveVertex(288, 360); //10
   endShape();
-
-
-
-
   //draw right arm outline
   fill(bridgeColor);
   beginShape();
@@ -440,8 +441,6 @@ function drawBodyshape() {
   curveVertex(226, 525); //14.6
   curveVertex(226, 525); //14.6
   endShape();
-
-
   //draw left arm outline
   beginShape();
   curveVertex(349, 561); //15.6
@@ -455,8 +454,6 @@ function drawBodyshape() {
   curveVertex(349, 561); //15.6
   curveVertex(349, 561); //15.6
   endShape();
-
-
   //draw left hand outline below shoulders
   beginShape();
   curveVertex(250, 375); //10.3
@@ -470,8 +467,6 @@ function drawBodyshape() {
   curveVertex(250, 375); //10.3
   curveVertex(250, 375); //10.3
   endShape();
-
-
   //draw right hand outline below shoulders
   beginShape();
   curveVertex(330, 380); //10.3
@@ -485,10 +480,6 @@ function drawBodyshape() {
   curveVertex(330, 380); //10.3
   curveVertex(330, 380); //10.3
   endShape();
-
-
-
-
   //draw left shadow bottom
   beginShape();
   curveVertex(280, 622); //17.3
@@ -505,10 +496,6 @@ function drawBodyshape() {
   curveVertex(280, 622); //17.3
   curveVertex(280, 622); //17.3
   endShape();
-
-
-
-
   //draw right shadow bottom
   beginShape();
   curveVertex(237, 648); //18
@@ -525,10 +512,6 @@ function drawBodyshape() {
   curveVertex(237, 648); //18
   curveVertex(237, 648); //18
   endShape();
-
-
-
-
   //face outline
   noStroke();
   fill(greenColor);
@@ -545,24 +528,16 @@ function drawBodyshape() {
   curveVertex(288, 390); //11
   curveVertex(288, 390); //11
   endShape();
-
-
-
-
   //eyes and mouth
   fill(lightBlueColor);
   circle(275, 415, 20);
   circle(310, 415, 20);
   ellipse(295, 460, 15, 30);
-
-
   //people in the far top left
   fill(darkBlueColor);
   beginShape();
   curveVertex(43, 375); //8.5
   curveVertex(43, 375); //8.5
-
-
   curveVertex(39, 298); //8.3
   curveVertex(32, 295); //8.2
   curveVertex(28, 288); //8
@@ -585,10 +560,19 @@ function drawBodyshape() {
   curveVertex(43, 295); //8.2
   curveVertex(43, 295); //8.2
   curveVertex(50, 298); //8.3
-
-
   curveVertex(48, 375); //8.5
   curveVertex(43, 375); //8.5
   curveVertex(43, 375); //8.5
   endShape()
+}
+
+// create play song button play and pause on the song
+function togglePlay() {
+  if (thunderAudio.isPlaying()) {
+    thunderAudio.pause();
+    playButton.html('Play Thunder'); 
+  } else {
+    thunderAudio.play();
+    playButton.html('Pause'); 
+  }
 }
