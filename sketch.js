@@ -3,10 +3,9 @@ function setup() {
   createCanvas(646, 800);
   // initial the colors
   let currentColors = [];
-  summerColors = [color(237, 199, 98), color(208, 179, 104), color(194, 158, 106), color(145, 59, 34), color(136, 153, 170), color(42, 47, 78), color(51, 63, 89), color(57, 73, 109), color(81, 103, 82), color(46, 61, 54)];
-  // winterColors = [];
-  for (let i = 0; i < summerColors.length; i++) {
-    currentColors.push(summerColors[i]);
+  dayColors = [color(237, 199, 98), color(208, 179, 104), color(194, 158, 106), color(145, 59, 34), color(136, 153, 170), color(42, 47, 78), color(51, 63, 89), color(57, 73, 109), color(81, 103, 82), color(46, 61, 54)];
+  for (let i = 0; i < dayColors.length; i++) {
+    currentColors.push(dayColors[i]);
   }
   yellowColor = currentColors[0];
   orangeColor = currentColors[1];
@@ -21,9 +20,6 @@ function setup() {
 }
 function draw() {
   background(240);
-
-
-  // changeSeason();
   drawLake();
   drawLand();
   drawSky();
@@ -68,7 +64,7 @@ function drawLake() {
   endShape();
 
 
-  fill(237, 199, 98);
+  fill(yellowColor);
   beginShape();
   curveVertex(3, 296);
   curveVertex(3, 296);
@@ -104,8 +100,6 @@ function drawLake() {
 
   fill(lightBlueColor);
   ellipse(180, 320, 72, 22);
-
-
 
 
 }
@@ -431,7 +425,7 @@ function drawBodyshape() {
 
 
   //draw right arm outline
-  fill(orangeColor);
+  fill(bridgeColor);
   beginShape();
   curveVertex(226, 525); //14.6
   curveVertex(226, 525); //14.6
