@@ -249,8 +249,8 @@ function drawSky() {
   curveVertex(500, 53 - skyMove);
   curveVertex(300, 63 + skyMove);
   curveVertex(0, 70 - skyMove);
-  curveVertex(0, 45 + skyMove); // Loop back to start to close shape
-  curveVertex(0, 45 - skyMove); // Repeat first point to smooth the curve end
+  curveVertex(0, 45 + skyMove); 
+  curveVertex(0, 45 - skyMove); 
   endShape(CLOSE);
 
 
@@ -370,7 +370,6 @@ function drawSky() {
 function drawBridge() {
   let ampLevel = amplitude.getLevel();
   let colorChange = constrain(ampLevel * 10, 0, 1);
-  // let colorChange = map(level, 0, 5, 0, 5); // map amplitude level to a range from 0 to 1 for lerpColor
   let bridgeColorchange2 = lerpColor(redColor, thunderWhite, colorChange);
 
   noStroke();
