@@ -12,32 +12,37 @@ function setup() {
   createCanvas(646, 800);
   amplitude = new p5.Amplitude();
   // initial the original colors
-  yellowColor = color(237, 199, 98); //sky and lake
-  orangeColor = color(208, 179, 104); //sky , head and shadow on the cloth
-  bridgeColor = color(194, 158, 106); //bridge
-  redColor = color(145, 59, 34); //sky and shadow of the background people and the handrail of the bridge
-  lightBlueColor = color(136, 153, 170); // centre of the lake and sky
-  darkBlueColor = color(42, 47, 78); //lake shadow and background people and screamer's cloth
-  blueColor = color(51, 63, 89); // lake background color
-  lakeColor = color(57, 73, 109); // edge of the lake
-  greenColor = color(81, 103, 82); // land and shadow on the face
-  darkGreenColor = color(46, 61, 54); // land shadow  
-  
-  // initial the sky animation colors for audio animation
-  thunderBlack = color(0, 0, 0); 
-  thunderBlue = color(30, 30, 100); 
-  thunderGray = color(115, 115, 115); 
-  thunderWhite = color(255, 255, 224); 
-  thunderOrange = color(255, 165, 0); 
-  thunderSun = color(255, 219, 0); 
+  let currentColors = [];
+  dayColors = [color(237, 199, 98), color(208, 179, 104), color(194, 158, 106), color(145, 59, 34), color(136, 153, 170), color(42, 47, 78), color(51, 63, 89), color(57, 73, 109), color(81, 103, 82), color(46, 61, 54)];
+  for (let i = 0; i < dayColors.length; i++) {
+    currentColors.push(dayColors[i]);
+  }
+  yellowColor = currentColors[0];
+  orangeColor = currentColors[1];
+  bridgeColor = currentColors[2];
+  redColor = currentColors[3];
+  lightBlueColor = currentColors[4];
+  darkBlueColor = currentColors[5];
+  blueColor = currentColors[6];
+  lakeColor = currentColors[7];
+  greenColor = currentColors[8];
+  darkGreenColor = currentColors[9];
 
-// set up the fft audio analysis
-let fft = new p5.FFT();
-    thunderAudio.connect(fft);
-//create play button for audio 
-    playButton = createButton('Play Thunder Island');
-    playButton.position(20, height - 40); 
-    playButton.mousePressed(togglePlay); 
+  // initial the sky animation colors for audio animation
+  thunderBlack = color(0, 0, 0);
+  thunderBlue = color(30, 30, 100);
+  thunderGray = color(115, 115, 115);
+  thunderWhite = color(255, 255, 224);
+  thunderOrange = color(255, 165, 0);
+  thunderSun = color(255, 219, 0);
+
+  // set up the fft audio analysis
+  let fft = new p5.FFT();
+  thunderAudio.connect(fft);
+  // create play button for audio 
+  playButton = createButton('Play Thunder Island');
+  playButton.position(20, height - 40);
+  playButton.mousePressed(togglePlay);
 }
 function draw() {
   background(240);
@@ -51,10 +56,10 @@ function draw() {
 function togglePlay() {
   if (thunderAudio.isPlaying()) {
     thunderAudio.pause();
-    playButton.html('Play Thunder Island'); 
+    playButton.html('Play Thunder Island');
   } else {
     thunderAudio.play();
-    playButton.html('Pause'); 
+    playButton.html('Pause');
   }
 }
 function drawLake() {
@@ -175,204 +180,202 @@ function drawLand() {
 
 
 function drawSky() {
-// Get the current amplitude level and amplify its effect by 4 on color change to make change more intense
-// use constrain to keep the color value between 0-1
+  // Get the current amplitude level and amplify its effect by 4 on color change to make change more intense
+  // use constrain to keep the color value between 0-1
   let ampLevel = amplitude.getLevel();
-  let colorChange = constrain(ampLevel * 4, 0, 1);
+  let skyMove = map(ampLevel, 0, 1, 0, 65);
+  let colorChange = constrain(ampLevel * 7, 0, 1);
   //Create color change using lerpColor. change from original color to color of choice
-  let redChange1 = lerpColor(redColor, thunderBlack, colorChange);
+  let redChange1 = lerpColor(redColor, thunderGray, colorChange);
   let redChange2 = lerpColor(redColor, thunderWhite, colorChange);
   let orangeChange1 = lerpColor(orangeColor, thunderBlue, colorChange);
-  let orangeChange2 = lerpColor(orangeColor, redColor, colorChange);
+  let orangeChange2 = lerpColor(orangeColor, thunderBlack, colorChange);
   let orangeChange3 = lerpColor(orangeColor, thunderWhite, colorChange);
-  let yellowChange1 = lerpColor(yellowColor, thunderSun, colorChange);
-  
+  let yellowChange1 = lerpColor(yellowColor, thunderOrange, colorChange);
+
 
   noStroke();
   fill(lightBlueColor);
-  rect(0, 0, 800, 200); 
-  
+  rect(0, 0, 800, 200 );
+
   fill(redColor);
   beginShape();
-  curveVertex(0, 0);
-  curveVertex(0, 0);
-  curveVertex(150, 0);
-  curveVertex(200, 10);
-  curveVertex(320, 0);
-  curveVertex(446, 0);
-  curveVertex(500, 0);
-  curveVertex(400, 25);
-  curveVertex(320, 15);
-  curveVertex(200, 40);
-  curveVertex(20, 15);
-  curveVertex(0, 25);
-  curveVertex(0, 0);
-  curveVertex(0, 0);
+  curveVertex(0, 0 + skyMove);
+  curveVertex(0, 0 - skyMove);
+  curveVertex(150, 0 - skyMove);
+  curveVertex(200, 10 + skyMove);
+  curveVertex(320, 0 - skyMove);
+  curveVertex(446, 0 + skyMove);
+  curveVertex(500, 0 - skyMove);
+  curveVertex(400, 25 + skyMove);
+  curveVertex(320, 15 - skyMove);
+  curveVertex(200, 40 + skyMove);
+  curveVertex(20, 15 - skyMove);
+  curveVertex(0, 25 + skyMove);
+  curveVertex(0, 0 + skyMove);
+  curveVertex(0, 0 + skyMove);
   endShape(CLOSE);
 
 
   fill(orangeChange1);
   beginShape();
-  curveVertex(0, 25);
-  curveVertex(0, 25);
-  curveVertex(40, 18);
-  curveVertex(100, 24);
-  curveVertex(200, 39);
-  curveVertex(320, 10);
-  curveVertex(400, 25);
-  curveVertex(500, 0);
-  curveVertex(750, 0);
-  curveVertex(500, 48);
-  curveVertex(0, 36);
-  curveVertex(0, 0);
-  curveVertex(0, 0);
+  curveVertex(0, 25 + skyMove);
+  curveVertex(0, 25 - skyMove); 
+  curveVertex(40, 18 + skyMove);
+  curveVertex(100, 24 - skyMove);
+  curveVertex(200, 39 + skyMove);
+  curveVertex(320, 10 - skyMove);
+  curveVertex(400, 25 + skyMove);
+  curveVertex(500, 0 - skyMove);
+  curveVertex(750, 0 + skyMove);
+  curveVertex(500, 48 - skyMove);
+  curveVertex(0, 36 + skyMove);
+  curveVertex(0, 0); 
+  curveVertex(0, 0); 
   endShape(CLOSE);
 
 
   fill(redChange1);
   beginShape();
-  curveVertex(0, 45);
-  curveVertex(0, 45);
-  curveVertex(40, 35);
-  curveVertex(160, 54);
-  curveVertex(328, 46);
-  curveVertex(500, 23);
-  curveVertex(600, 33);
-  curveVertex(800, 22);
-  curveVertex(800, 63);
-  curveVertex(500, 53);
-  curveVertex(300, 63);
-  curveVertex(0, 70);
-  curveVertex(0, 0);
-  curveVertex(0, 0);
+  curveVertex(0, 45 + skyMove);
+  curveVertex(0, 45 - skyMove);
+  curveVertex(40, 35 + skyMove);
+  curveVertex(160, 54 - skyMove);
+  curveVertex(328, 46 + skyMove);
+  curveVertex(500, 23 - skyMove);
+  curveVertex(600, 33 + skyMove);
+  curveVertex(800, 22 - skyMove);
+  curveVertex(800, 63 + skyMove);
+  curveVertex(500, 53 - skyMove);
+  curveVertex(300, 63 + skyMove);
+  curveVertex(0, 70 - skyMove);
+  curveVertex(0, 45 + skyMove); // Loop back to start to close shape
+  curveVertex(0, 45 - skyMove); // Repeat first point to smooth the curve end
   endShape(CLOSE);
 
 
   //New Brush Stroke
   fill(orangeChange2);
   beginShape();
-  curveVertex(0, 70);
-  curveVertex(0, 70);
-  curveVertex(50, 55);
-  curveVertex(100, 64);
-  curveVertex(40, 92);
-  curveVertex(300, 63);
-  curveVertex(600, 47);
-  curveVertex(800, 80);
-  curveVertex(800, 120);
-  curveVertex(500, 78);
-  curveVertex(300, 73);
-  curveVertex(0, 120);
+  curveVertex(0, 70 + skyMove);
+  curveVertex(0, 70 + skyMove); 
+  curveVertex(50, 55 + skyMove);
+  curveVertex(100, 64 + skyMove);
+  curveVertex(150, 92 + skyMove); 
+  curveVertex(300, 63 + skyMove);
+  curveVertex(600, 47 + skyMove);
+  curveVertex(800, 80 + skyMove);
+  curveVertex(800, 120); 
+  curveVertex(500, 78 + skyMove);
+  curveVertex(300, 73 + skyMove);
+  curveVertex(0, 120); 
   curveVertex(0, 0);
-  curveVertex(0, 0);
+  curveVertex(0, 0); 
   endShape(CLOSE);
 
 
   //New Brush Stroke
   fill(redChange1);
   beginShape();
-  curveVertex(0, 120);
-  curveVertex(0, 120);
-  curveVertex(100, 110);
-  curveVertex(380, 67);
-  curveVertex(800, 120);
-  curveVertex(800, 160);
-  curveVertex(400, 130);
-  curveVertex(200, 170);
-  curveVertex(0, 160);
-  curveVertex(0, 140);
-  curveVertex(0, 140);
+  curveVertex(0, 120 + skyMove);
+  curveVertex(0, 120 + skyMove); 
+  curveVertex(100, 110 + skyMove);
+  curveVertex(380, 67 + skyMove);
+  curveVertex(800, 120 + skyMove);
+  curveVertex(800, 160); 
+  curveVertex(400, 130 + skyMove);
+  curveVertex(200, 170 + skyMove);
+  curveVertex(0, 160); 
+  curveVertex(0, 140); 
+  curveVertex(0, 140); 
   endShape(CLOSE);
 
 
   //New Brush Stroke
   fill(orangeChange3);
   beginShape();
-  curveVertex(90, 140);
-  curveVertex(90, 140);
-  curveVertex(200, 120);
-  curveVertex(300, 120);
-  curveVertex(180, 150);
-  curveVertex(90, 140);
-  curveVertex(90, 140);
+  curveVertex(90 + skyMove, 140 + skyMove);
+  curveVertex(90 + skyMove, 140 + skyMove); 
+  curveVertex(200 + skyMove, 120 + skyMove);
+  curveVertex(300 + skyMove, 120 + skyMove);
+  curveVertex(180 + skyMove, 150 + skyMove);
+  curveVertex(90 + skyMove, 140 + skyMove);
+  curveVertex(90 + skyMove, 140 + skyMove); 
   endShape(CLOSE);
 
 
   //New Brush Stroke
-  fill(orangeColor)
+  fill(orangeChange1);
   beginShape();
-  curveVertex(0, 160);
-  curveVertex(0, 160);
-  curveVertex(200, 170);
-  curveVertex(450, 117);
-  curveVertex(800, 180);
-  curveVertex(800, 220);
-  curveVertex(400, 200);
-  curveVertex(0, 190);
-  curveVertex(0, 0);
-  curveVertex(0, 0);
+  curveVertex(0, 160 + skyMove);
+  curveVertex(0, 160 - skyMove); 
+  curveVertex(200, 170 + skyMove); 
+  curveVertex(450, 117 - skyMove);
+  curveVertex(800, 180 + skyMove);
+  curveVertex(800, 220 - skyMove); 
+  curveVertex(400, 200 + skyMove);
+  curveVertex(0, 190 - skyMove);
+  curveVertex(0, 160 + skyMove); 
+  curveVertex(0, 160 - skyMove); 
+  endShape(CLOSE);
+
+
+  //New Brush Stroke
+  fill(yellowChange1); 
+  beginShape();
+  curveVertex(30, 90);
+  curveVertex(30, 90); 
+  curveVertex(100, 60 + skyMove); 
+  curveVertex(700, 80 + skyMove); 
+  curveVertex(500, 50 + skyMove); 
+  curveVertex(90, 90 - skyMove); 
   endShape(CLOSE);
 
 
   //New Brush Stroke
   fill(yellowChange1);
   beginShape();
-  curveVertex(30, 90);
-  curveVertex(30, 90);
-  curveVertex(100, 60);
-  curveVertex(700, 80);
-  curveVertex(500, 50);
-  curveVertex(90, 90);
-  endShape(CLOSE);
-
-
-  //New Brush Stroke
-  fill(yellowChange1);
-  beginShape();
-  curveVertex(0, 190);
-  curveVertex(0, 190);
-  curveVertex(800, 200);
-  curveVertex(800, 220);
-  curveVertex(700, 200);
-  curveVertex(470, 230);
-  curveVertex(200, 210);
-  curveVertex(100, 240);
-  curveVertex(0, 210);
-  curveVertex(0, 210);
+  curveVertex(0, 190 + skyMove);
+  curveVertex(0, 190 - skyMove);
+  curveVertex(800, 200 + skyMove);
+  curveVertex(800, 220 - skyMove);
+  curveVertex(700, 200 + skyMove);
+  curveVertex(470, 230 - skyMove);
+  curveVertex(200, 210 + skyMove);
+  curveVertex(100, 240 - skyMove);
+  curveVertex(0, 210 + skyMove);
+  curveVertex(0, 210 + skyMove);
   endShape(CLOSE);
 
 
   // NewBrush Stroke
   fill(redChange2);
   beginShape();
-  curveVertex(0, 180);
-  curveVertex(0, 180);
-  curveVertex(150, 190);
-  curveVertex(350, 170);
-  curveVertex(600, 190);
-  curveVertex(800, 160);
-  curveVertex(800, 200);
-  curveVertex(590, 210);
-  curveVertex(320, 200);
-  curveVertex(0, 190);
+  curveVertex(0, 180 + skyMove);
+  curveVertex(0, 180 - skyMove);
+  curveVertex(150, 190 + skyMove);
+  curveVertex(350, 170 - skyMove);
+  curveVertex(600, 190 + skyMove);
+  curveVertex(800, 160 - skyMove);
+  curveVertex(800, 200 + skyMove);
+  curveVertex(590, 210 - skyMove);
+  curveVertex(320, 200 + skyMove);
+  curveVertex(0, 190 - skyMove);
   curveVertex(0, 0);
   curveVertex(0, 0);
   endShape(CLOSE);
 
 }
 
-
-//BRIDGE DRAWING
 function drawBridge() {
   let ampLevel = amplitude.getLevel();
   let colorChange = constrain(ampLevel * 10, 0, 1);
   // let colorChange = map(level, 0, 5, 0, 5); // map amplitude level to a range from 0 to 1 for lerpColor
-  let bridgeColorchange1 = lerpColor(bridgeColor, thunderBlack, colorChange);
   let bridgeColorchange2 = lerpColor(redColor, thunderWhite, colorChange);
 
   noStroke();
   // Drawing the main bridge
-  fill(bridgeColorchange1);
+  fill(bridgeColor);
   beginShape();
   vertex(0, 240);
   vertex(0, 800);
@@ -415,183 +418,185 @@ function drawBridge() {
 
 
 function drawBodyshape() {
+  let ampLevel = amplitude.getLevel();
+  let bodyMove = map(ampLevel, 0, 1, 0, 140);
   stroke(orangeColor);
   //draw body outline:
   fill(blueColor);
   beginShape();
   //head
-  curveVertex(288, 360); //10
-  curveVertex(288, 360); //10
-  curveVertex(240, 375); //11
-  curveVertex(230, 420); //12
-  curveVertex(252, 486); //13.5
+  curveVertex(288, 360 + bodyMove); 
+  curveVertex(288, 360 + bodyMove); 
+  curveVertex(240, 375 + bodyMove); 
+  curveVertex(230, 420 + bodyMove); 
+  curveVertex(252, 486 + bodyMove); 
   //shoulder
-  curveVertex(216, 522); //14.5
-  curveVertex(198, 576); //16
+  curveVertex(216, 522 + bodyMove); 
+  curveVertex(198, 576 + bodyMove); 
   //middle arm to elbow
-  curveVertex(176, 648); //18
-  curveVertex(198, 666); //18.5
+  curveVertex(176, 648 + bodyMove); 
+  curveVertex(198, 666 + bodyMove); 
   //curved hips left
-  curveVertex(180, 720); //20
-  curveVertex(212, 785); //22
+  curveVertex(180, 720 + bodyMove); 
+  curveVertex(212, 785 + bodyMove); 
   //bottom
-  curveVertex(324, 785); //22
+  curveVertex(324, 785 + bodyMove); 
   //curved hips right
-  curveVertex(295, 720); //20
-  curveVertex(313, 648); //18
+  curveVertex(295, 720 + bodyMove); 
+  curveVertex(313, 648 + bodyMove); 
   //elbow to middle arm
-  curveVertex(331, 658); //18.3
-  curveVertex(352, 648); //18
+  curveVertex(331, 658 + bodyMove); 
+  curveVertex(352, 648 + bodyMove); 
   //middle arm to shoulder
-  curveVertex(360, 612); //17
-  curveVertex(346, 522); //14.5
+  curveVertex(360, 612 + bodyMove); 
+  curveVertex(346, 522 + bodyMove); 
   //hand bump/shoulder
-  curveVertex(342, 504); //14
-  curveVertex(330, 486); //13.5
+  curveVertex(342, 504 + bodyMove); 
+  curveVertex(330, 486 + bodyMove); 
   //head
-  curveVertex(352, 414); //11.5
-  curveVertex(335, 375); //11
-  curveVertex(288, 360); //10
-  curveVertex(288, 360); //10
+  curveVertex(352, 414 + bodyMove); 
+  curveVertex(335, 375 + bodyMove); 
+  curveVertex(288, 360 + bodyMove); 
+  curveVertex(288, 360 + bodyMove); 
   endShape();
   //draw right arm outline
   fill(bridgeColor);
   beginShape();
-  curveVertex(226, 525); //14.6
-  curveVertex(226, 525); //14.6
-  curveVertex(208, 576); //16
-  curveVertex(205, 594); //16.5
-  curveVertex(205, 594); //17.7
-  curveVertex(198, 648); //18
-  curveVertex(216, 630); //17.5
-  curveVertex(223, 612); //17
-  curveVertex(223, 576); //16
-  curveVertex(226, 540); //15
-  curveVertex(226, 525); //14.6
-  curveVertex(226, 525); //14.6
+  curveVertex(226, 525 + bodyMove); 
+  curveVertex(226, 525 + bodyMove); 
+  curveVertex(208, 576 + bodyMove); 
+  curveVertex(205, 594 + bodyMove); 
+  curveVertex(205, 594 + bodyMove); 
+  curveVertex(198, 648 + bodyMove); 
+  curveVertex(216, 630 + bodyMove); 
+  curveVertex(223, 612 + bodyMove); 
+  curveVertex(223, 576 + bodyMove); 
+  curveVertex(226, 540 + bodyMove); 
+  curveVertex(226, 525 + bodyMove); 
+  curveVertex(226, 525 + bodyMove); 
   endShape();
   //draw left arm outline
   beginShape();
-  curveVertex(349, 561); //15.6
-  curveVertex(349, 561); //15.6
-  curveVertex(338, 561); //15.6
-  curveVertex(334, 612); //17
-  curveVertex(324, 645); //18
-  curveVertex(338, 648); //18.2
-  curveVertex(356, 612); //17
-  curveVertex(352, 576); //16
-  curveVertex(349, 561); //15.6
-  curveVertex(349, 561); //15.6
+  curveVertex(349, 561 + bodyMove); 
+  curveVertex(349, 561 + bodyMove); 
+  curveVertex(338, 561 + bodyMove); 
+  curveVertex(334, 612 + bodyMove); 
+  curveVertex(324, 645 + bodyMove); 
+  curveVertex(338, 648 + bodyMove); 
+  curveVertex(356, 612 + bodyMove); 
+  curveVertex(352, 576 + bodyMove); 
+  curveVertex(349, 561 + bodyMove); 
+  curveVertex(349, 561 + bodyMove); 
   endShape();
   //draw left hand outline below shoulders
   beginShape();
-  curveVertex(250, 375); //10.3
-  curveVertex(250, 375); //10.3
-  curveVertex(240, 400); //12.5
-  curveVertex(265, 486); //13.5
-  curveVertex(250, 522); //14.5
-  curveVertex(244, 545); //15.5
-  curveVertex(273, 486); //13.5
-  curveVertex(250, 400); //12.5
-  curveVertex(250, 375); //10.3
-  curveVertex(250, 375); //10.3
+  curveVertex(250, 375 + bodyMove); 
+  curveVertex(250, 375 + bodyMove); 
+  curveVertex(240, 400 + bodyMove); 
+  curveVertex(265, 486 + bodyMove); 
+  curveVertex(250, 522 + bodyMove); 
+  curveVertex(244, 545 + bodyMove); 
+  curveVertex(273, 486 + bodyMove); 
+  curveVertex(250, 400 + bodyMove); 
+  curveVertex(250, 375 + bodyMove); 
+  curveVertex(250, 375 + bodyMove); 
   endShape();
   //draw right hand outline below shoulders
   beginShape();
-  curveVertex(330, 380); //10.3
-  curveVertex(330, 380); //10.3
-  curveVertex(345, 425); //12.5
-  curveVertex(320, 486); //13.5
-  curveVertex(340, 522); //14.5
-  curveVertex(335, 550); //14.5
-  curveVertex(310, 490); //14.5
-  curveVertex(330, 430); //14.5
-  curveVertex(330, 380); //10.3
-  curveVertex(330, 380); //10.3
+  curveVertex(330, 380 + bodyMove); 
+  curveVertex(330, 380 + bodyMove); 
+  curveVertex(345, 425 + bodyMove); 
+  curveVertex(320, 486 + bodyMove); 
+  curveVertex(340, 522 + bodyMove); 
+  curveVertex(335, 550 + bodyMove); 
+  curveVertex(310, 490 + bodyMove); 
+  curveVertex(330, 430 + bodyMove); 
+  curveVertex(330, 380 + bodyMove); 
+  curveVertex(330, 380 + bodyMove); 
   endShape();
   //draw left shadow bottom
   beginShape();
-  curveVertex(280, 622); //17.3
-  curveVertex(280, 622); //17.3
-  curveVertex(255, 684); //19
-  curveVertex(248, 720); //20
-  curveVertex(248, 756); //21
-  curveVertex(259, 785); //22
-  curveVertex(269, 785); //22
-  curveVertex(255, 756); //21
-  curveVertex(259, 720); //20
-  curveVertex(262, 684); //19
-  curveVertex(290, 622); //17.3
-  curveVertex(280, 622); //17.3
-  curveVertex(280, 622); //17.3
+  curveVertex(280, 622 + bodyMove); 
+  curveVertex(280, 622 + bodyMove); 
+  curveVertex(255, 684 + bodyMove); 
+  curveVertex(248, 720 + bodyMove); 
+  curveVertex(248, 756 + bodyMove); 
+  curveVertex(259, 785 + bodyMove); 
+  curveVertex(269, 785 + bodyMove); 
+  curveVertex(255, 756 + bodyMove); 
+  curveVertex(259, 720 + bodyMove); 
+  curveVertex(262, 684 + bodyMove); 
+  curveVertex(290, 622 + bodyMove); 
+  curveVertex(280, 622 + bodyMove); 
+  curveVertex(280, 622 + bodyMove); 
   endShape();
   //draw right shadow bottom
   beginShape();
-  curveVertex(237, 648); //18
-  curveVertex(237, 648); //18
-  curveVertex(223, 684); //19
-  curveVertex(212, 720); //20
-  curveVertex(219, 756); //21
-  curveVertex(234, 785); //22
-  curveVertex(244, 785); //22
-  curveVertex(226, 756); //21
-  curveVertex(223, 720); //20
-  curveVertex(230, 684); //19
-  curveVertex(247, 648); //18
-  curveVertex(237, 648); //18
-  curveVertex(237, 648); //18
+  curveVertex(237, 648 + bodyMove); 
+  curveVertex(237, 648 + bodyMove); 
+  curveVertex(223, 684 + bodyMove); 
+  curveVertex(212, 720 + bodyMove); 
+  curveVertex(219, 756 + bodyMove); 
+  curveVertex(234, 785 + bodyMove); 
+  curveVertex(244, 785 + bodyMove); 
+  curveVertex(226, 756 + bodyMove); 
+  curveVertex(223, 720 + bodyMove); 
+  curveVertex(230, 684 + bodyMove); 
+  curveVertex(247, 648 + bodyMove); 
+  curveVertex(237, 648 + bodyMove); 
+  curveVertex(237, 648 + bodyMove); 
   endShape();
   //face outline
   noStroke();
   fill(greenColor);
   beginShape();
-  curveVertex(288, 390); //11
-  curveVertex(288, 390); //11
-  curveVertex(260, 403); //11.2
-  curveVertex(270, 440); //12
-  curveVertex(280, 470); //13
-  curveVertex(290, 496); //13.8
-  curveVertex(305, 486); //13.5
-  curveVertex(316, 439); //12.2
-  curveVertex(326, 405); //11.5
-  curveVertex(288, 390); //11
-  curveVertex(288, 390); //11
+  curveVertex(288, 390 + bodyMove); 
+  curveVertex(288, 390 + bodyMove); 
+  curveVertex(260, 403 + bodyMove); 
+  curveVertex(270, 440 + bodyMove); 
+  curveVertex(280, 470 + bodyMove); 
+  curveVertex(290, 496 + bodyMove); 
+  curveVertex(305, 486 + bodyMove); 
+  curveVertex(316, 439 + bodyMove); 
+  curveVertex(326, 405 + bodyMove); 
+  curveVertex(288, 390 + bodyMove); 
+  curveVertex(288, 390 + bodyMove); 
   endShape();
   //eyes and mouth
   fill(lightBlueColor);
-  circle(275, 415, 20);
-  circle(310, 415, 20);
-  ellipse(295, 460, 15, 30);
+  circle(275, 415 + bodyMove, 20 );
+  circle(310, 415 + bodyMove, 20 );
+  ellipse(295, 460 + bodyMove, 15 + bodyMove, 30 + bodyMove);
   //people in the far top left
   fill(darkBlueColor);
   beginShape();
-  curveVertex(43, 375); //8.5
-  curveVertex(43, 375); //8.5
-  curveVertex(39, 298); //8.3
-  curveVertex(32, 295); //8.2
-  curveVertex(28, 288); //8
-  curveVertex(25, 288); //8
-  curveVertex(21, 306); //8.5
-  curveVertex(8, 324); //9
-  curveVertex(11, 342); //9.5
-  curveVertex(14, 360); //10
-  curveVertex(14, 378); //10.5
-  curveVertex(25, 381); //10.6
-  curveVertex(57, 381); //10.6
-  curveVertex(64, 385); //10.7
-  curveVertex(68, 360); //10
-  curveVertex(64, 324); //9
-  curveVertex(61, 302); //8.4
-  curveVertex(54, 302); //8.4
-  curveVertex(54, 298); //8.3
-  curveVertex(64, 298); //8.3
-  curveVertex(36, 284); //7.9
-  curveVertex(43, 295); //8.2
-  curveVertex(43, 295); //8.2
-  curveVertex(50, 298); //8.3
-  curveVertex(48, 375); //8.5
-  curveVertex(43, 375); //8.5
-  curveVertex(43, 375); //8.5
+  curveVertex(43, 375); 
+  curveVertex(43, 375); 
+  curveVertex(39, 298); 
+  curveVertex(32, 295); 
+  curveVertex(28, 288); 
+  curveVertex(25, 288); 
+  curveVertex(21, 306); 
+  curveVertex(8, 324); 
+  curveVertex(11, 342); 
+  curveVertex(14, 360); 
+  curveVertex(14, 378); 
+  curveVertex(25, 381);
+  curveVertex(57, 381); 
+  curveVertex(64, 385); 
+  curveVertex(68, 360); 
+  curveVertex(64, 324); 
+  curveVertex(61, 302); 
+  curveVertex(54, 302); 
+  curveVertex(54, 298); 
+  curveVertex(64, 298); 
+  curveVertex(36, 284); 
+  curveVertex(43, 295); 
+  curveVertex(43, 295); 
+  curveVertex(50, 298); 
+  curveVertex(48, 375); 
+  curveVertex(43, 375); 
+  curveVertex(43, 375); 
   endShape()
 }
 
