@@ -1,7 +1,7 @@
 
 # Instructions
 - Push "Play Thunder Island" button in the bottom left hand corner of the canvas to start audio and see the animation
-- **Bold Text** Audio takes 5 seconds to start, please wait
+- **Audio takes 5 seconds to start, please wait** 
 
 # Things to Note
 - Our Final Group Code is the commit titled "Group F Code Final"
